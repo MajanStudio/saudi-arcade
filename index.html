@@ -106,4 +106,29 @@ function openWheel(){clearInterval(timer);clearInterval(wheelTimer);wheelBusy=fa
 function spinSaudiWheel(){if(wheelBusy)return;clearInterval(wheelTimer);wheelBusy=true;wheelIndex=Math.floor(Math.random()*wheelTasks.length);const disc=$('wheelDisc');let currentMod=((wheelRotation%360)+360)%360;let targetMod=((360-(wheelIndex*30+15))%360);let add=((targetMod-currentMod+360)%360)+360*6;wheelRotation+=add;disc.style.transform=`rotate(${wheelRotation}deg)`;$('spinBtn').disabled=true;$('wheelOutcome').innerHTML='<p class="desc" style="text-align:center">✨ The wheel is spinning…</p>';setTimeout(()=>{wheelBusy=false;const task=wheelTasks[wheelIndex];if(wheelIndex===11){$('wheelOutcome').innerHTML=`<div class="wheel-result"><h3>🔄 Try Again!</h3><p>حظ أوفر! لف العجلة مرة ثانية.</p><button class="btn" onclick="spinSaudiWheel()">SPIN AGAIN ↻</button></div>`;$('spinBtn').disabled=false;return;}$('wheelOutcome').innerHTML=`<div class="wheel-result"><div class="eyebrow">YOUR CHALLENGE · تحديك</div><h3>${esc(task[0])}</h3><p>${esc(task[1])+"<br><span class=arabic>"+esc(task[2])+"</span>"}</p><div class="wheel-clock" id="wheelClock">30s</div><div class="actions" style="justify-content:center"><button class="btn" onclick="wheelSuccess()">✓ CHALLENGE COMPLETED</button><button class="btn secondary" onclick="wheelFailed()">✕ TIME'S UP / TRY AGAIN</button></div><p class="audio-note">Organizer: verify the challenge before pressing completed.</p></div>`;wheelSeconds=30;wheelTimer=setInterval(()=>{wheelSeconds-- ;if($('wheelClock'))$('wheelClock').textContent=wheelSeconds+'s';if(wheelSeconds<=0){clearInterval(wheelTimer);wheelFailed()}},1000)},5100)}
 function wheelSuccess(){clearInterval(wheelTimer);$('wheelOutcome').innerHTML='<div class="wheel-result"><div style="font-size:65px">🏆🇸🇦</div><h3>مبروك! تستحق جائزة</h3><p>CHALLENGE COMPLETED! Claim your treat from the Saudi Club booth.</p><div class="wheel-win">🎁 YOU WON A PRIZE!</div><div class="actions" style="justify-content:center"><button class="btn" onclick="openWheel()">NEXT PLAYER →</button></div></div>'}
 function wheelFailed(){clearInterval(wheelTimer);$('wheelOutcome').innerHTML='<div class="wheel-result"><h3>⏳ انتهى الوقت!</h3><p>Nice try! Give the wheel another spin.</p><button class="btn" onclick="openWheel()">TRY AGAIN ↻</button></div>'}
-</script></body></html>
+</script>
+<script>
+// Portable media fallback for GitHub Pages: media files live beside index.html.
+const SAUDI_PHOTOS = {"saudi_arcade_image_finish_0": "media/saudi_arcade_image_finish_0.jpg", "saudi_arcade_image_finish_1": "media/saudi_arcade_image_finish_1.jpg", "saudi_arcade_image_finish_2": "media/saudi_arcade_image_finish_2.jpg", "saudi_arcade_image_song_4": "media/saudi_arcade_image_song_4.jpg", "saudi_arcade_image_song_0": "media/saudi_arcade_image_song_0.jpg", "saudi_arcade_image_celebrity_2": "media/saudi_arcade_image_celebrity_2.jpg", "saudi_arcade_image_food_0": "media/saudi_arcade_image_food_0.jpg", "saudi_arcade_image_food_4": "media/saudi_arcade_image_food_4.jpg", "saudi_arcade_image_city_2": "media/saudi_arcade_image_city_2.jpg", "saudi_arcade_image_song_3": "media/saudi_arcade_image_song_3.jpg", "saudi_arcade_image_food_1": "media/saudi_arcade_image_food_1.jpg", "saudi_arcade_image_food_3": "media/saudi_arcade_image_food_3.jpg", "saudi_arcade_image_song_1": "media/saudi_arcade_image_song_1.jpg", "saudi_arcade_image_city_0": "media/saudi_arcade_image_city_0.jpg", "saudi_arcade_image_celebrity_0": "media/saudi_arcade_image_celebrity_0.jpg", "saudi_arcade_image_song_2": "media/saudi_arcade_image_song_2.jpg", "saudi_arcade_image_city_4": "media/saudi_arcade_image_city_4.jpg", "saudi_arcade_image_celebrity_3": "media/saudi_arcade_image_celebrity_3.jpg", "saudi_arcade_image_food_2": "media/saudi_arcade_image_food_2.jpg", "saudi_arcade_image_city_3": "media/saudi_arcade_image_city_3.jpg", "saudi_arcade_image_city_1": "media/saudi_arcade_image_city_1.jpg", "saudi_arcade_image_celebrity_4": "media/saudi_arcade_image_celebrity_4.jpg", "saudi_arcade_image_celebrity_1": "media/saudi_arcade_image_celebrity_1.jpg"};
+const SAUDI_AUDIO = {"finish_0": "media/saudi_arcade_audio_finish_0.mp3", "finish_1": "media/saudi_arcade_audio_finish_1.mp3", "finish_2": "media/saudi_arcade_audio_finish_2.m4a", "song_0": "media/saudi_arcade_audio_song_0.mp3", "song_1": "media/saudi_arcade_audio_song_1.mp3", "song_2": "media/saudi_arcade_audio_song_2.mp3", "song_3": "media/saudi_arcade_audio_song_3.mp3", "song_4": "media/saudi_arcade_audio_song_4.mp3"};
+const saudiOriginalPhotoLoader = loadPhotoFromDB;
+loadPhotoFromDB = async function(){
+  const key = imageKey();
+  const path = SAUDI_PHOTOS[key];
+  if(path){
+    const visual = document.querySelector('#playContent .visual');
+    if(visual){let el=visual.querySelector('img');if(!el){el=document.createElement('img');el.alt='Challenge photo';visual.appendChild(el)}el.src=path;}
+  } else {await saudiOriginalPhotoLoader();}
+};
+const saudiOriginalAudioStatus = updateAudioStatus;
+updateAudioStatus = async function(){
+  const key=songKey(),path=SAUDI_AUDIO[key];
+  const status=document.getElementById('audioStatus'),player=document.getElementById('songPlayer');
+  if(path && player && status){
+    player.src=path;player.load();
+    player.addEventListener('timeupdate',()=>{if(player.currentTime>=60){player.pause();player.currentTime=60;}},{passive:true});
+    status.textContent='✓ Music ready · Tap PLAY MUSIC or the audio player';
+  } else {await saudiOriginalAudioStatus();}
+};
+</script>
+</body></html>
